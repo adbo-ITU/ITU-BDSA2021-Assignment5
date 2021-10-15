@@ -2,36 +2,42 @@
 
 namespace GildedRose.Console
 {
-    class Program
+    public class Program
     {
-        IList<Item> Items;
-        static void Main(string[] args)
+        public IList<Item> Items { get; init; }
+
+        public static void Main(string[] args)
         {
             System.Console.WriteLine("OMGHAI!");
 
             var app = new Program()
-                          {
-                              Items = new List<Item>
-                                          {
-                                              new Item {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20},
-                                              new Item {Name = "Aged Brie", SellIn = 2, Quality = 0},
-                                              new Item {Name = "Elixir of the Mongoose", SellIn = 5, Quality = 7},
-                                              new Item {Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80},
-                                              new Item
-                                                  {
-                                                      Name = "Backstage passes to a TAFKAL80ETC concert",
-                                                      SellIn = 15,
-                                                      Quality = 20
-                                                  },
-                                              new Item {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6}
-                                          }
+            {
+                Items = new List<Item>
+                {
+                    new Item {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20},
+                    new Item {Name = "Aged Brie", SellIn = 2, Quality = 0},
+                    new Item {Name = "Elixir of the Mongoose", SellIn = 5, Quality = 7},
+                    new Item {Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80},
+                    new Item
+                        {
+                            Name = "Backstage passes to a TAFKAL80ETC concert",
+                            SellIn = 15,
+                            Quality = 20
+                        },
+                    new Item {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6}
+                }
 
-                          };
+            };
 
-            app.UpdateQuality();
+            app.PrintItems();
 
-            System.Console.ReadKey();
+            for (int i = 0; i < 30; i++)
+            {
+                app.UpdateQuality();
+            }
 
+            System.Console.WriteLine();
+            app.PrintItems();
         }
 
         public void UpdateQuality()
@@ -110,9 +116,16 @@ namespace GildedRose.Console
             }
         }
 
+        public void PrintItems()
+        {
+            foreach (var item in Items)
+            {
+                System.Console.WriteLine(item);
+            }
+        }
     }
 
-    public class Item
+    public record Item
     {
         public string Name { get; set; }
 
