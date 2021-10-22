@@ -42,7 +42,7 @@ namespace GildedRose.Tests
                 new BackstagePass { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 14, Quality = 21 },
                 new BackstagePass { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 9, Quality = 50 },
                 new BackstagePass { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 4, Quality = 50 },
-                new Item { Name = "Conjured Mana Cake", SellIn = 2, Quality = 5 }
+                new Conjured { Name = "Conjured Mana Cake", SellIn = 2, Quality = 8 }
             };
 
             Assert.Equal(expected, _app.Items);
@@ -66,7 +66,7 @@ namespace GildedRose.Tests
                 new BackstagePass() { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = -15, Quality = 0 },
                 new BackstagePass() { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = -20, Quality = 0 },
                 new BackstagePass() { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = -25, Quality = 0 },
-                new Item() { Name = "Conjured Mana Cake", SellIn = -27, Quality = 0 }
+                new Conjured() { Name = "Conjured Mana Cake", SellIn = -27, Quality = 0 }
             };
 
             Assert.Equal(expected, _app.Items);
@@ -236,6 +236,32 @@ namespace GildedRose.Tests
             pass.SellIn = -1;
             _app.UpdateQuality();
             Assert.Equal(0, pass.Quality);
+        }
+
+        [Fact]
+        public void UpdateQuality_conjured_items_degrade_with_2_before_sellin()
+        {
+            var item = _app.Items.Where(item => item.Name.StartsWith("Conjured")).First();
+            var originalQuality = item.Quality;
+            _app.UpdateQuality();
+            Assert.Equal(8, item.Quality);
+            _app.UpdateQuality();
+            Assert.Equal(6, item.Quality);
+            _app.UpdateQuality();
+            Assert.Equal(4, item.Quality);
+        }
+
+        [Fact]
+        public void UpdateQuality_conjured_items_degrade_with_4_after_sellin()
+        {
+            var item = _app.Items.Where(item => item.Name.StartsWith("Conjured")).First();
+            _app.UpdateQuality();
+            _app.UpdateQuality();
+            _app.UpdateQuality();
+            Assert.Equal(0, item.SellIn);
+
+            _app.UpdateQuality();
+            Assert.Equal(0, item.Quality);
         }
     }
 }
