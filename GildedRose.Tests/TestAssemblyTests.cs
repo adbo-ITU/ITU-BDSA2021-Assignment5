@@ -26,7 +26,7 @@ namespace GildedRose.Tests
                             SellIn = 15,
                             Quality = 20
                         },
-                    new Item {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6}
+                    new Item {Name = "Conjured Mana Cake", SellIn = 3, Quality = 10}
                 }
             };
         }
@@ -52,7 +52,7 @@ namespace GildedRose.Tests
                 new Item { Name = "Elixir of the Mongoose", SellIn = 4, Quality = 6 },
                 new Item { Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80 },
                 new Item { Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 14, Quality = 21 },
-                new Item { Name = "Conjured Mana Cake", SellIn = 2, Quality = 5 }
+                new Item { Name = "Conjured Mana Cake", SellIn = 2, Quality = 8 }
             };
 
             Assert.Equal(expected, _app.Items);
@@ -243,6 +243,33 @@ namespace GildedRose.Tests
             pass.SellIn = -1;
             _app.UpdateQuality();
             Assert.Equal(0, pass.Quality);
+        }
+
+        [Fact]
+        public void UpdateQuality_conjured_items_degrade_with_2_before_sellin()
+        {
+            var item = _app.Items.Where(item => item.Name.StartsWith("Conjured")).First();
+            var originalQuality = item.Quality;
+            _app.UpdateQuality();
+            Assert.Equal(originalQuality - 2, item.Quality);
+            _app.UpdateQuality();
+            Assert.Equal(originalQuality - 4, item.Quality);
+            _app.UpdateQuality();
+            Assert.Equal(originalQuality - 6, item.Quality);
+        }
+
+        [Fact]
+        public void UpdateQuality_conjured_items_degrade_with_4_after_sellin()
+        {
+            var item = _app.Items.Where(item => item.Name.StartsWith("Conjured")).First();
+            _app.UpdateQuality();
+            _app.UpdateQuality();
+            _app.UpdateQuality();
+            Assert.Equal(0, item.SellIn);
+
+            var originalQuality = item.Quality;
+            _app.UpdateQuality();
+            Assert.Equal(originalQuality - 4, item.Quality);
         }
     }
 }
